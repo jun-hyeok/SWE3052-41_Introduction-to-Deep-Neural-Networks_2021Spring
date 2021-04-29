@@ -16,6 +16,28 @@ class LogisticRegression:
         # Tip : log computation may cause some error, so try to solve it by adding an epsilon(small value) within log term.
         epsilon = 1e-7
         # ========================= EDIT HERE ========================
+        y = y.reshape(x.shape[0], 1)
+        w = self.W
+        print(f"x.shape {x.shape}, y.shape{y.shape}")
+        n_batch = int(x.shape[0]/batch_size)
+        for i in range(epochs):
+            loss = 0
+            dw = np.zeros_like(self.W)
+            for j in range(n_batch):
+                batch_start = j * batch_size
+                batch_end = batch_start+batch_size
+                x_batched = x[batch_start:batch_end]
+                y_batched = y[batch_start:batch_end]
+                y_predicted = self.forward(x_batched)
+                neg_cost = y_batched * np.log(y_predicted+epsilon) + (1 - y_batched) * np.log(1 - y_predicted+epsilon)
+                loss += -np.sum(neg_cost) / batch_size
+                error = y_predicted - y_batched
+                dw = np.sum(x_batched * error, axis=0).reshape(self.num_features, 1)
+                dw /= batch_size
+                w = optim.update(w, dw, lr)
+                self.W = w
+            loss /= n_batch
+        print(f"loss {loss}, batch_size {batch_size}, epoch {epochs}")
 
         # ============================================================
         return loss
@@ -30,6 +52,11 @@ class LogisticRegression:
         # Otherwise, it predicts as 0
 
         # ========================= EDIT HERE ========================
+        y_predicted = np.dot(x, self.W)
+        y_predicted = LogisticRegression._sigmoid(self, y_predicted)
+        lt_threshold = y_predicted < threshold
+        y_predicted[lt_threshold] = 0
+        y_predicted[np.invert(lt_threshold)] = 1
 
         # ============================================================
 
@@ -42,6 +69,7 @@ class LogisticRegression:
         # The function returns the sigmoid of 'x'
 
         # ========================= EDIT HERE ========================
+        sigmoid = 1 / (1 + np.exp(-x))
 
         # ============================================================
         return sigmoid
