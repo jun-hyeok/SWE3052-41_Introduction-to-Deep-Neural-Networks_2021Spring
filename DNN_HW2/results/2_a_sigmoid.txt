@@ -1,0 +1,6 @@
+[EPOCH 100] Loss = 79.55175
+Train Accuracy = 0.595 // Valid Accuracy = 0.574
+Best Accuracy updated (0.5640 => 0.5740)
+Training Finished...!!
+Best Valid acc : 0.57 at epoch 100
+Test Accuracy at Best Epoch : 0.60
