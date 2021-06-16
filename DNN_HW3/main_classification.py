@@ -1,3 +1,4 @@
+# %%
 import time
 import numpy as np
 from utils import load_mnist, load_fashion_mnist
@@ -16,7 +17,7 @@ np.tanh = lambda x: x
 """
 
 # mnist / fashion_mnist
-dataset = 'mnist'
+dataset = "fashion_mnist"
 
 # Hyper-parameters
 num_epochs = 200
@@ -27,13 +28,13 @@ print_every = 10
 batch_size = 1000
 
 # =========================================================================
-assert dataset in ['mnist', 'fashion_mnist']
+assert dataset in ["mnist", "fashion_mnist"]
 
 # Dataset
-if dataset == 'mnist':
-    x_train, y_train, x_test, y_test = load_mnist('./data')
+if dataset == "mnist":
+    x_train, y_train, x_test, y_test = load_mnist("./data")
 else:
-    x_train, y_train, x_test, y_test = load_fashion_mnist('./data')
+    x_train, y_train, x_test, y_test = load_fashion_mnist("./data")
 
 x_train, x_test = np.squeeze(x_train), np.squeeze(x_test)
 
@@ -50,26 +51,34 @@ x_train, y_train = x_train[train_idx], y_train[train_idx]
 
 num_train, height, width = x_train.shape
 num_class = y_train.shape[1]
-print('# of Training data : ', num_train)
+print("# of Training data : ", num_train)
 
 # MLP_classifier __init__ function
-model = MLP_classifier(height*width, num_class, learning_rate)
+model = MLP_classifier(height * width, num_class, learning_rate)
 
-print('Training Starts...')
+print("Training Starts...")
 # MLP_classifier train function
-model.train(x_train.reshape(-1, height*width), y_train, x_valid.reshape(-1, height*width), y_valid, num_epochs, batch_size, print_every)
+model.train(
+    x_train.reshape(-1, height * width),
+    y_train,
+    x_valid.reshape(-1, height * width),
+    y_valid,
+    num_epochs,
+    batch_size,
+    print_every,
+)
 
 # TEST ACCURACY
 # MLP_classifier restore function
 model.restore()
 # MLP_classifier predict function
-pred = model.predict(x_test.reshape(-1, height*width))
+pred = model.predict(x_test.reshape(-1, height * width))
 true = np.argmax(y_test, -1).astype(int)
 
 correct = len(np.where(pred == true)[0])
 total = len(true)
 test_acc = correct / total
 
-print('Test Accuracy at Best Epoch : %.2f' % (test_acc))
+print("Test Accuracy at Best Epoch : %.2f" % (test_acc))
 
 model.plot_accuracy()
